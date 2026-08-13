@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gullak — designing a savings product for rural India · Kunal Londhe</title>
+<meta name="description" content="A self-directed product case study: how do you build a savings product for women earning small, irregular amounts with no bank branch nearby?">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>K</text></svg>">
+<style>
+  :root{
+    --ink:#12151a; --ink-2:#3d4450; --ink-3:#6b7280;
+    --bg:#fbfaf8; --surface:#ffffff; --line:#e6e2dc;
+    --accent:#5b3fd6; --accent-soft:#efeaff; --warm:#c2410c;
+    --max:1080px;
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 28px}
+  a{color:inherit}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(251,250,248,.82); backdrop-filter:saturate(180%) blur(12px);
+    border-bottom:1px solid transparent; transition:border-color .2s;
+  }
+  nav.scrolled{border-bottom-color:var(--line)}
+  .nav-in{display:flex; align-items:center; justify-content:space-between; height:62px}
+  .brand{font-weight:650; letter-spacing:-.02em; font-size:16px; text-decoration:none}
+  .nav-links{display:flex; gap:26px; font-size:14.5px}
+  .nav-links a{color:var(--ink-2); text-decoration:none; transition:color .15s}
+  .nav-links a:hover{color:var(--accent)}
+  @media(max-width:720px){ .nav-links{display:none} }
+
+  /* ---------- hero ---------- */
+  header{padding:74px 0 58px}
+  .hero{display:grid; grid-template-columns:1fr 186px; gap:52px; align-items:start}
+  @media(max-width:760px){ .hero{grid-template-columns:1fr; gap:30px} .hero-photo{order:-1} }
+  .eyebrow{
+    font-family:var(--mono); font-size:12.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 18px; font-weight:600;
+  }
+  h1{
+    font-family:var(--serif); font-size:clamp(38px,6vw,58px); line-height:1.05;
+    letter-spacing:-.025em; margin:0 0 20px; font-weight:600;
+  }
+  .lede{font-size:clamp(18px,2.2vw,20.5px); color:var(--ink-2); margin:0 0 12px; max-width:36em; line-height:1.6}
+  .lede strong{color:var(--ink); font-weight:600}
+  .hero-photo img{
+    width:186px; height:186px; border-radius:50%; object-fit:cover; display:block;
+    box-shadow:0 2px 4px rgba(18,21,26,.06), 0 12px 32px rgba(18,21,26,.10);
+  }
+  @media(max-width:760px){ .hero-photo img{width:120px;height:120px} }
+  .cta{display:flex; flex-wrap:wrap; gap:11px; margin-top:30px}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+    padding:10px 17px; border-radius:8px; font-size:14.5px; font-weight:550;
+    border:1px solid var(--line); background:var(--surface); color:var(--ink-2);
+    transition:all .16s ease;
+  }
+  .btn:hover{border-color:var(--ink-3); color:var(--ink); transform:translateY(-1px)}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  .btn.primary:hover{background:#4c33bb; border-color:#4c33bb; color:#fff}
+
+  /* ---------- section chrome ---------- */
+  section{padding:52px 0; border-top:1px solid var(--line)}
+  .sec-label{
+    font-family:var(--mono); font-size:12px; letter-spacing:.11em; text-transform:uppercase;
+    color:var(--ink-3); margin:0 0 10px; font-weight:600;
+  }
+  h2{font-family:var(--serif); font-size:clamp(27px,3.6vw,34px); letter-spacing:-.02em; margin:0 0 8px; font-weight:600; line-height:1.2}
+  .sec-sub{color:var(--ink-2); margin:0 0 34px; max-width:44em; font-size:16.5px}
+  h3{font-size:19px; letter-spacing:-.01em; margin:0 0 8px; font-weight:620}
+
+  /* ---------- stat strip ---------- */
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  @media(max-width:700px){ .stats{grid-template-columns:repeat(2,1fr)} }
+  .stat{background:var(--surface); padding:22px 20px}
+  .stat b{display:block; font-family:var(--serif); font-size:30px; line-height:1; letter-spacing:-.02em; margin-bottom:7px}
+  .stat span{font-size:13.5px; color:var(--ink-3); line-height:1.4; display:block}
+
+  /* ---------- case study ---------- */
+  .case{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:34px; margin-bottom:22px}
+  @media(max-width:640px){ .case{padding:24px 20px} }
+  .case-head{display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:6px}
+  .tag{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--accent-soft); color:var(--accent); padding:4px 9px; border-radius:5px; font-weight:600; white-space:nowrap;
+  }
+  .tag.grey{background:#f1efec; color:var(--ink-3)}
+  .apps{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:24px 0 4px}
+  @media(max-width:700px){ .apps{grid-template-columns:1fr} }
+  .app{border:1px solid var(--line); border-radius:10px; padding:17px 18px; background:var(--bg)}
+  .app b{display:block; font-size:15px; margin-bottom:5px; letter-spacing:-.01em}
+  .app span{font-size:14px; color:var(--ink-3); line-height:1.5}
+
+  /* ---------- problem cards ---------- */
+  .prob{border-left:2px solid var(--line); padding:2px 0 2px 22px; margin:26px 0}
+  .prob:hover{border-left-color:var(--accent)}
+  .prob h4{font-size:16.5px; margin:0 0 12px; font-weight:620; letter-spacing:-.01em}
+  .prob dl{margin:0; display:grid; grid-template-columns:92px 1fr; gap:7px 16px}
+  @media(max-width:620px){ .prob dl{grid-template-columns:1fr; gap:2px 0} .prob dd{margin-bottom:11px} }
+  .prob dt{
+    font-family:var(--mono); font-size:11px; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:600; padding-top:4px;
+  }
+  .prob dd{margin:0; color:var(--ink-2); font-size:15.5px; line-height:1.6}
+  .prob dd.out{color:var(--ink); font-weight:500}
+
+  /* ---------- lists ---------- */
+  ul.clean{list-style:none; padding:0; margin:0}
+  ul.clean li{position:relative; padding-left:19px; margin-bottom:11px; color:var(--ink-2); font-size:15.5px; line-height:1.6}
+  ul.clean li::before{content:''; position:absolute; left:2px; top:10px; width:5px; height:5px; border-radius:50%; background:var(--accent); opacity:.5}
+  ul.clean li b{color:var(--ink); font-weight:600}
+
+  /* ---------- grid cards ---------- */
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  @media(max-width:760px){ .grid2,.grid3{grid-template-columns:1fr} }
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:24px;
+    transition:border-color .16s, transform .16s, box-shadow .16s; text-decoration:none; color:inherit; display:block;
+  }
+  a.card:hover{border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 22px rgba(18,21,26,.07)}
+  .card.feature{padding:32px; border-color:#d9d2f5}
+  .card.feature:hover{border-color:var(--accent)}
+  .card.feature p{color:var(--ink-2)}
+  @media(max-width:640px){ .card.feature{padding:24px 20px} .card.feature h3{font-size:19px !important} }
+  .card p{color:var(--ink-2); font-size:15px; margin:0 0 14px; line-height:1.6}
+  .stack{display:flex; flex-wrap:wrap; gap:6px}
+  .chip{font-family:var(--mono); font-size:11.5px; color:var(--ink-3); background:var(--bg); border:1px solid var(--line); padding:3px 8px; border-radius:5px}
+
+  /* ---------- timeline ---------- */
+  .role{display:grid; grid-template-columns:170px 1fr; gap:26px; padding:24px 0; border-bottom:1px solid var(--line)}
+  .role:last-child{border-bottom:none}
+  @media(max-width:700px){ .role{grid-template-columns:1fr; gap:8px} }
+  .role-when{font-family:var(--mono); font-size:13px; color:var(--ink-3); padding-top:3px; line-height:1.5}
+  .role-co{color:var(--ink-3); font-size:15px; margin:0 0 10px}
+
+  /* ---------- skills ---------- */
+  .skill-row{display:grid; grid-template-columns:132px 1fr; gap:20px; padding:15px 0; border-bottom:1px solid var(--line)}
+  .skill-row:last-child{border-bottom:none}
+  @media(max-width:620px){ .skill-row{grid-template-columns:1fr; gap:8px} }
+  .skill-row b{font-size:14.5px; letter-spacing:-.005em}
+  .skill-row div{color:var(--ink-2); font-size:15px; line-height:1.75}
+
+  /* ---------- contact ---------- */
+  .contact{text-align:center; padding:66px 0}
+  .contact h2{margin-bottom:14px}
+  .contact p{color:var(--ink-2); max-width:32em; margin:0 auto 28px; font-size:17px}
+  footer{border-top:1px solid var(--line); padding:26px 0 40px; color:var(--ink-3); font-size:13.5px; display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap}
+  footer a{color:var(--ink-3)}
+
+  .note{font-size:13.5px; color:var(--ink-3); font-style:italic; margin-top:20px; padding-top:16px; border-top:1px dashed var(--line)}
+
+  /* ---------- reveal ---------- */
+  .rv{opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease}
+  .rv.in{opacity:1; transform:none}
+  @media(prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} }
+
+  .back{display:inline-flex; align-items:center; gap:7px; font-size:14.5px; color:var(--ink-3); text-decoration:none; margin-bottom:26px}
+  .back:hover{color:var(--accent)}
+  .meta{display:flex; gap:22px; flex-wrap:wrap; font-family:var(--mono); font-size:12.5px; color:var(--ink-3); margin:20px 0 0; padding-top:18px; border-top:1px solid var(--line)}
+  .meta b{color:var(--ink-2); font-weight:600}
+  .pull{font-family:var(--serif); font-size:clamp(21px,3vw,26px); line-height:1.45; color:var(--ink); border-left:3px solid var(--accent); padding:6px 0 6px 24px; margin:30px 0; letter-spacing:-.01em}
+  .pull span{display:block; font-family:var(--sans); font-size:14px; color:var(--ink-3); margin-top:12px; letter-spacing:0}
+  .ladder{counter-reset:step; margin:22px 0}
+  .rung{position:relative; padding:18px 20px 18px 62px; background:var(--surface); border:1px solid var(--line); border-radius:11px; margin-bottom:11px}
+  .rung::before{
+    counter-increment:step; content:"L" counter(step);
+    position:absolute; left:18px; top:17px; width:30px; height:30px; border-radius:8px;
+    background:var(--accent-soft); color:var(--accent); font-family:var(--mono); font-size:12.5px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .rung b{display:block; font-size:15.5px; margin-bottom:4px; letter-spacing:-.01em}
+  .rung span{font-size:15px; color:var(--ink-2); line-height:1.6}
+  .phase{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:22px}
+  .phase h4{margin:0 0 4px; font-size:16px; letter-spacing:-.01em}
+  .phase .when{font-family:var(--mono); font-size:11.5px; color:var(--accent); text-transform:uppercase; letter-spacing:.07em; margin-bottom:13px; font-weight:600}
+  .phase ul{margin:0; padding-left:17px}
+  .phase li{font-size:14.5px; color:var(--ink-2); margin-bottom:6px; line-height:1.55}
+  .gapgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:14px; margin-top:20px}
+  .gap{border:1px solid var(--line); border-radius:10px; padding:17px 18px; background:var(--surface)}
+  .gap b{display:block; font-size:14.5px; margin-bottom:5px}
+  .gap span{font-size:14px; color:var(--ink-3); line-height:1.55}
+  .metric{display:grid; grid-template-columns:112px 1fr; gap:18px; padding:14px 0; border-bottom:1px solid var(--line)}
+  .metric:last-child{border-bottom:none}
+  @media(max-width:600px){ .metric{grid-template-columns:1fr; gap:5px} }
+  .metric b{font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--accent); padding-top:4px; font-weight:600}
+  .metric div{font-size:15.5px; color:var(--ink-2); line-height:1.6}
+  .metric div em{color:var(--ink); font-style:normal; font-weight:600}
+  .timeline{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:22px}
+  @media(max-width:820px){ .timeline{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:480px){ .timeline{grid-template-columns:1fr} }
+  .disclaimer{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--ink-3); border-radius:0 11px 11px 0; padding:20px 22px; margin-top:34px}
+  .disclaimer p{margin:0; font-size:14.5px; color:var(--ink-3); line-height:1.65}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html">Kunal Londhe</a>
+    <div class="nav-links">
+      <a href="index.html#work">Work</a>
+      <a href="index.html#casestudies">Case studies</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header style="padding:52px 0 40px">
+  <div class="wrap">
+    <a class="back" href="index.html">← Back to portfolio</a>
+    <p class="eyebrow">Self-directed case study</p>
+    <h1 style="max-width:17em">A savings product for women the banking system doesn't reach</h1>
+    <p class="lede">Rural women want to save. Most can't. Not because they lack the will, but because every product on offer assumes a bank branch nearby, a predictable income, and money you won't need back suddenly. None of those hold.</p>
+    <p class="lede">So I gave myself the problem: <strong>design something that works for someone earning ₹40 on a good day, four kilometres from the nearest ATM.</strong> This is the model I arrived at.</p>
+    <div class="meta">
+      <span><b>Type</b> — Product case study, self-directed</span>
+      <span><b>Scope</b> — Discovery to roadmap and metrics</span>
+      <span><b>Year</b> — 2025</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label rv">The starting point</p>
+    <h2 class="rv">What I assumed, and why it matters</h2>
+    <p class="sec-sub rv">Every one of these constrains the design. If any turns out false, parts of the model collapse — which is exactly why they're written down first rather than discovered later.</p>
+    <ul class="clean rv">
+      <li><b>Income is small and irregular.</b> Not ₹5,000 a month. ₹20 today, nothing tomorrow, ₹150 on market day. Any product with a fixed monthly commitment fails on day one.</li>
+      <li><b>The bank is far.</b> No branch, no ATM within practical reach. A trip costs a day's earnings in time and fare, so it has to be worth making — which small savings never are.</li>
+      <li><b>SHG women are the trust layer.</b> Self-Help Group members are already trusted, already handle group money, already meet regularly. That social infrastructure exists; the product should ride it rather than rebuild it.</li>
+      <li><b>Phones are basic, and confidence is lower than capability.</b> Most have a phone. Fewer will risk using it for money without someone beside them the first few times.</li>
+      <li><b>The product cannot hold the money.</b> Deposits sit with an RBI-regulated bank; this is a front-end. Anything else is both illegal and untrustworthy, and the two are related.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label rv">The insight</p>
+    <h2 class="rv">Borrow the delivery model, not the banking model</h2>
+    <p class="sec-sub rv">Quick commerce solved a version of this problem: get something to someone's door, fast, in places infrastructure doesn't reach. Microfinance solved a different one: extend trust where there's no collateral or credit history. Neither works alone here. Together they do.</p>
+
+    <div class="pull rv">Combine the speed of a quick-commerce network with the trust of a microfinance institution — and put both in the hands of a woman the village already knows.<span>The product pitch, in one line</span></div>
+
+    <div class="apps rv" style="margin-top:32px">
+      <div class="app"><b>Agents</b><span>Two women per village, drawn from the local SHG. They collect deposits (₹10–₹200), record them in an offline-capable app, and hand out cash on withdrawal. A portion of their own money is locked as security, which makes them guarantors rather than employees.</span></div>
+      <div class="app"><b>Float</b><span>A cash reserve held in the village — around ₹10,000 — so a withdrawal doesn't require a journey. The float is what makes the promise of instant access real rather than aspirational.</span></div>
+      <div class="app"><b>Cluster</b><span>Six to eight neighbouring villages grouped together. Close enough that an agent can physically reach another within the day, which is the precondition for the whole fallback system working.</span></div>
+      <div class="app"><b>Peer borrowing</b><span>When one village's float runs dry, its agent requests cash from another agent in the cluster through the app. Liquidity is pooled socially before it's pooled institutionally.</span></div>
+      <div class="app"><b>Hub</b><span>A partner bank branch or post office anchoring each cluster. Excess deposits go here for safekeeping; emergency replenishment comes back out.</span></div>
+      <div class="app"><b>Executive</b><span>One per cluster. Refills floats weekly, collects surplus, delivers emergency cash, trains agents, and helps women through the paperwork for insurance, pension and government schemes. The bridge between the village and formal banking.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label rv">The core mechanic</p>
+    <h2 class="rv">Three levels of fallback on a withdrawal</h2>
+    <p class="sec-sub rv">Deposits are the easy half — someone comes to your door and takes your money. Withdrawals are where trust is won or lost, because the request usually arrives during an emergency. Savitri needs ₹1,500 today, for a hospital. Here is what happens.</p>
+
+    <div class="ladder rv">
+      <div class="rung"><b>The agent's float covers it</b><span>She has the cash in the village. Savitri has her money in minutes, and never learns a fallback system exists. This is the path most requests should take.</span></div>
+      <div class="rung"><b>Peer borrowing across the cluster</b><span>The agent has only ₹500. Through the app she requests the remaining ₹1,000 from an agent in a neighbouring village, who delivers it the same day. The network covers what the village couldn't.</span></div>
+      <div class="rung"><b>Executive delivery from the hub</b><span>Every agent in the cluster is short. The executive collects cash from the partner bank or post office and rides it out within hours. Slower, and rare by design — but it means the answer is never no.</span></div>
+    </div>
+
+    <p class="note rv">The deposit journey is deliberately unremarkable by comparison: Savitri hands over ₹20, the agent records it, and an SMS in her own language arrives alongside a passbook update. Two confirmations, one paper and one digital, because trust is being built and one of them is a format she already believes.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label rv">Who this is for</p>
+    <h2 class="rv">Three women, three different problems</h2>
+    <div class="grid3 rv" style="margin-top:24px">
+      <div class="card">
+        <h3>Savitri</h3>
+        <p>Wants somewhere safe for ₹20 to ₹100 at a time. Has never held a bank account and isn't looking for one. Needs the money back the day she needs it, without explanation or a form.</p>
+        <div class="stack"><span class="chip">Safety</span><span class="chip">Instant access</span></div>
+      </div>
+      <div class="card">
+        <h3>Meera</h3>
+        <p>Curious about doing this on her phone, and slightly afraid of getting it wrong. Will move to digital if someone stands next to her the first three times. The bridge user the whole Stage 2 design exists for.</p>
+        <div class="stack"><span class="chip">Guidance</span><span class="chip">Confidence</span></div>
+      </div>
+      <div class="card">
+        <h3>Kamala</h3>
+        <p>Runs an SHG of 10 to 15 women and is already the person they ask about money. Adopting this makes her more useful to her group; her endorsement is worth more than any campaign.</p>
+        <div class="stack"><span class="chip">Distribution</span><span class="chip">Credibility</span></div>
+      </div>
+    </div>
+
+    <p class="sec-label rv" style="margin-top:46px">What's actually broken</p>
+    <h2 class="rv">Five gaps</h2>
+    <div class="gapgrid rv">
+      <div class="gap"><b>Trust</b><span>Formal banks and apps feel like places where money goes in and questions come back out.</span></div>
+      <div class="gap"><b>Access</b><span>No branch, no ATM. Distance turns a small deposit into an expensive errand.</span></div>
+      <div class="gap"><b>Flexibility</b><span>Fixed-amount, fixed-date products assume an income these women don't have.</span></div>
+      <div class="gap"><b>Emergency</b><span>Savings you can't reach today are indistinguishable from savings you don't have.</span></div>
+      <div class="gap"><b>Knowledge</b><span>Schemes and entitlements exist that nobody has explained, in a language and format that works.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label rv">Sequencing</p>
+    <h2 class="rv">What ships when</h2>
+    <p class="sec-sub rv">The MVP proves one thing only: that money can go in and come back out of a village reliably. Everything else — digital literacy, credit, insurance — is earned on top of that proof, and pointless without it.</p>
+    <div class="grid3 rv">
+      <div class="phase">
+        <div class="when">Phase 1 · MVP</div>
+        <h4>Prove the loop</h4>
+        <ul>
+          <li>Two agents per village</li>
+          <li>₹10,000 float per village</li>
+          <li>Peer borrowing within the cluster</li>
+          <li>Direct deposit to the hub</li>
+          <li>Offline-capable app with SMS receipts</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="when">Phase 2 · Scale and teach</div>
+        <h4>Add the human layer</h4>
+        <ul>
+          <li>Executives covering 6–8 villages</li>
+          <li>Voice-enabled dashboards in local language</li>
+          <li>Financial literacy campaigns</li>
+          <li>Three-month saving streak unlocks micro-insurance</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="when">Phase 3 · Financial identity</div>
+        <h4>Turn savings into standing</h4>
+        <ul>
+          <li>Micro-loans</li>
+          <li>Credit scoring from savings history</li>
+          <li>Government scheme integration</li>
+          <li>Digital transfers, reducing physical cash</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="sec-label rv" style="margin-top:46px">Two years</p>
+    <h2 class="rv">Roadmap</h2>
+    <div class="timeline rv">
+      <div class="phase"><div class="when">Months 1–6</div><h4>Pilot</h4><ul><li>One cluster, 6–8 villages</li><li>Train the first agents</li><li>Stress-test peer borrowing</li></ul></div>
+      <div class="phase"><div class="when">Months 7–12</div><h4>Expand</h4><ul><li>Introduce executives</li><li>Launch voice dashboards</li><li>Streak rewards go live</li></ul></div>
+      <div class="phase"><div class="when">Months 13–18</div><h4>Partner</h4><ul><li>Formalise the RBI-regulated backend</li><li>Micro-insurance</li><li>Micro-loans</li></ul></div>
+      <div class="phase"><div class="when">Months 19–24</div><h4>Diversify</h4><ul><li>New clusters</li><li>Post offices as additional hubs</li><li>Digital gold, pension products</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label rv">Measurement</p>
+    <h2 class="rv">What I'd watch, and in what order</h2>
+    <p class="sec-sub rv">One north star, three supporting layers. The ordering matters more than the list — growth numbers look healthy long after the thing that mattered has stopped working.</p>
+    <div class="rv">
+      <div class="metric"><b>North star</b><div><em>Total savings collected.</em> The only number that means the product did the thing it exists to do. Everything else is diagnostic.</div></div>
+      <div class="metric"><b>Behaviour</b><div>Monthly deposits per saver, and streaks at three, six and twelve months. Saving once is a trial; saving on a rhythm is a habit, and only the second one compounds.</div></div>
+      <div class="metric"><b>Impact</b><div>Emergency withdrawals fulfilled — and at which fallback level. If level three fires often, the float sizing is wrong. Plus insurance coverage reached through streaks.</div></div>
+      <div class="metric"><b>Growth</b><div>Ninety-day retention and referrals. In a village, referral is not a marketing metric — it's the clearest available signal that the product is trusted.</div></div>
+    </div>
+
+    <div class="disclaimer rv">
+      <p><b>Open questions I'd want to answer before building.</b> The unit economics of holding idle float in every village, and whether the withdrawal speed it buys is worth the cost. How agent fraud is detected when the same person records the transaction and holds the cash. What the regulatory posture actually is for cash-in-hand collection ahead of the bank leg settling. And whether the executive role scales, or quietly becomes the bottleneck the whole cluster depends on.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap contact">
+    <h2 class="rv">Happy to talk through any of this</h2>
+    <p class="rv">Including the parts I'd change. This was written to practise the discovery-to-metrics arc end to end, and the open questions above are the honest state of it.</p>
+    <div class="cta rv" style="justify-content:center">
+      <a class="btn primary" href="mailto:kunallondhex@gmail.com">kunallondhex@gmail.com</a>
+      <a class="btn" href="index.html">Back to portfolio</a>
+      <a class="btn" href="https://www.linkedin.com/in/kunal-londhe-a72292232/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </div>
+  <div class="wrap"><footer>
+    <span>© <span id="yr">2026</span> Kunal Londhe · Mumbai, India</span>
+    <span>A self-directed concept study. Not affiliated with any existing product of the same name.</span>
+  </footer></div>
+</section>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var nav = document.getElementById('nav');
+  addEventListener('scroll', function(){ nav.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {rootMargin:'0px 0px -8% 0px', threshold:.06});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+</script>
+</body>
+</html>
