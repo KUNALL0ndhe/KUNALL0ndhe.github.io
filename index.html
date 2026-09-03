@@ -168,6 +168,30 @@
   .rv{opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease}
   .rv.in{opacity:1; transform:none}
   @media(prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} }
+
+  /* ---------- case study card ---------- */
+  .cs{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    display:grid; grid-template-columns:340px 1fr; gap:0; margin-bottom:22px;
+    transition:border-color .16s, box-shadow .16s, transform .16s;
+  }
+  .cs:hover{border-color:var(--accent); box-shadow:0 10px 28px rgba(18,21,26,.08); transform:translateY(-2px)}
+  @media(max-width:820px){ .cs{grid-template-columns:1fr} }
+  .cs-thumb{position:relative; background:#0a0c0b; border-right:1px solid var(--line); min-height:210px; display:flex; align-items:center}
+  @media(max-width:820px){ .cs-thumb{border-right:none; border-bottom:1px solid var(--line)} }
+  .cs-thumb svg{display:block; width:100%; height:auto}
+  .cs-shot{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block}
+  .cs-body{padding:28px 30px}
+  @media(max-width:640px){ .cs-body{padding:22px 20px} }
+  .cs-head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:10px}
+  .cs-head h3{margin:0; font-size:21px}
+  .cs-body > p{color:var(--ink-2); font-size:15.5px; line-height:1.62; margin:0 0 18px}
+  .cs-what{
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:600; margin:0 0 9px !important;
+  }
+  .cs-links{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px}
+  .cs-links .btn{padding:9px 15px; font-size:14px}
 </style>
 </head>
 <body>
@@ -229,67 +253,108 @@
 
 <section id="casestudies">
   <div class="wrap">
-    <p class="sec-label rv">Selected problems</p>
-    <h2 class="rv">Four decisions worth explaining</h2>
-    <p class="sec-sub rv">Each of these started as a user report I reproduced, traced to root cause, and turned into a specced change rather than a patch. Framed as problem → why it mattered → what changed.</p>
+    <p class="sec-label rv">Case studies</p>
+    <h2 class="rv">Product work, written up end to end</h2>
+    <p class="sec-sub rv">Each one ships as a full PRD with a working prototype attached — the problem, the decisions, the rules the system enforces, and the metrics I'd hold it to.</p>
 
-    <div class="case rv">
-      <div class="case-head"><h3>Payments were settling against the wrong month</h3><span class="tag">Money correctness</span></div>
-      <div class="prob">
-        <dl>
-          <dt>Problem</dt><dd>A resident carrying two unpaid months who paid a partial amount had it applied to the <em>current</em> month. The newest bill read as fully paid with credit sitting on the account, while the older bill stayed overdue.</dd>
-          <dt>Why it mattered</dt><dd>Residents were chased for bills they had already covered, and the ledger contradicted itself — credit and an outstanding due at the same time. Support couldn't explain the number, which is corrosive to trust in a billing product.</dd>
-          <dt>What changed</dt><dd class="out">Payments now cascade oldest-first. Credit can only exist once every bill is fully cleared — a rule the system enforces rather than a convention people follow. Shipped with a migration to re-allocate historical payments, because fixing the logic alone doesn't repair money already misapplied.</dd>
-          <dt>Trade-off</dt><dd>Re-allocating history was optional and slower to ship. I took it because leaving the past wrong meant every audit would surface the old behaviour anyway.</dd>
-        </dl>
+    <article class="cs rv">
+      <div class="cs-thumb">
+        <svg viewBox="0 0 480 320" role="img" aria-label="PocketPortfolio KYC onboarding prototype">
+          <defs>
+            <linearGradient id="csbg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#0e1512"/><stop offset="1" stop-color="#0a0c0b"/>
+            </linearGradient>
+          </defs>
+          <rect width="480" height="320" fill="url(#csbg)"/>
+          <!-- brand row -->
+          <rect x="22" y="20" width="26" height="26" rx="8" fill="#2e9e6b"/>
+          <text x="30.5" y="38.5" font-family="Georgia, serif" font-size="15" fill="#eafff4">P</text>
+          <text x="58" y="33" font-family="Georgia, serif" font-size="14.5" fill="#f2f5f3">PocketPortfolio</text>
+          <text x="58" y="46" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#7d8a84">Onboarding powered by Binvestt</text>
+          <rect x="330" y="22" width="128" height="22" rx="11" fill="none" stroke="#2a332e"/>
+          <circle cx="345" cy="33" r="3" fill="#d99a2b"/>
+          <text x="353" y="36.5" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#b9c4be">Prototype · AI simulated</text>
+          <!-- ticker -->
+          <rect x="22" y="58" width="436" height="26" rx="13" fill="#111815" stroke="#1d2621"/>
+          <text x="38" y="75" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#cdd6d1">Treasury bills</text>
+          <text x="104" y="75" font-family="ui-monospace, monospace" font-size="8.5" fill="#4ec38a">6.92%</text>
+          <text x="150" y="75" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#cdd6d1">Mutual funds</text>
+          <text x="212" y="75" font-family="ui-monospace, monospace" font-size="8.5" fill="#4ec38a">18.4%</text>
+          <text x="258" y="75" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#cdd6d1">SIP from ₹500</text>
+          <text x="332" y="75" font-family="ui-monospace, monospace" font-size="8.5" fill="#7d8a84">auto-debit</text>
+          <!-- main panel -->
+          <rect x="22" y="94" width="286" height="206" rx="12" fill="#0f1613" stroke="#1d2621"/>
+          <text x="40" y="116" font-family="ui-monospace, monospace" font-size="8" letter-spacing="1.2" fill="#4ec38a">SIGN UP</text>
+          <text x="234" y="116" font-family="ui-monospace, monospace" font-size="8" fill="#7d8a84">Step 1 of 6</text>
+          <rect x="40" y="124" width="41" height="2.5" rx="1.2" fill="#4ec38a"/>
+          <rect x="89" y="124" width="41" height="2.5" rx="1.2" fill="#232c27"/>
+          <rect x="138" y="124" width="41" height="2.5" rx="1.2" fill="#232c27"/>
+          <rect x="187" y="124" width="41" height="2.5" rx="1.2" fill="#232c27"/>
+          <rect x="236" y="124" width="41" height="2.5" rx="1.2" fill="#232c27"/>
+          <text x="40" y="152" font-family="Georgia, serif" font-size="16" fill="#f2f5f3">Start investing in under</text>
+          <text x="40" y="170" font-family="Georgia, serif" font-size="16" fill="#f2f5f3">two minutes</text>
+          <text x="40" y="187" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#8c978f">We verify your identity in the background so you can</text>
+          <text x="40" y="198" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#8c978f">invest the same day.</text>
+          <text x="40" y="218" font-family="Helvetica, Arial, sans-serif" font-size="7.5" fill="#7d8a84">Mobile number</text>
+          <rect x="40" y="224" width="250" height="24" rx="7" fill="#0b100e" stroke="#232c27"/>
+          <text x="50" y="240" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#5e6a64">+91   98765 43210</text>
+          <rect x="40" y="256" width="250" height="34" rx="7" fill="#0d1411" stroke="#232c27"/>
+          <rect x="50" y="265" width="10" height="10" rx="2.5" fill="none" stroke="#4ec38a"/>
+          <text x="68" y="272" font-family="Helvetica, Arial, sans-serif" font-size="7.5" fill="#dfe7e2">I consent to identity verification.</text>
+          <text x="68" y="282" font-family="Helvetica, Arial, sans-serif" font-size="7.5" fill="#7d8a84">Aadhaar / PAN + live selfie, under the PMLA.</text>
+          <!-- decision engine -->
+          <rect x="318" y="94" width="140" height="206" rx="12" fill="#0f1613" stroke="#1d2621"/>
+          <text x="332" y="115" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#f2f5f3">Binvestt AI Decision</text>
+          <text x="332" y="126" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#f2f5f3">Engine</text>
+          <text x="332" y="139" font-family="Helvetica, Arial, sans-serif" font-size="7" fill="#7d8a84">Live log · every automated</text>
+          <text x="332" y="148" font-family="Helvetica, Arial, sans-serif" font-size="7" fill="#7d8a84">action is recorded</text>
+          <rect x="332" y="158" width="112" height="20" rx="5" fill="#0b100e" stroke="#232c27"/>
+          <circle cx="342" cy="168" r="2.5" fill="#4ec38a"/>
+          <text x="350" y="171" font-family="ui-monospace, monospace" font-size="6.5" fill="#9fb0a7">OCR · PAN parsed</text>
+          <rect x="332" y="182" width="112" height="20" rx="5" fill="#0b100e" stroke="#232c27"/>
+          <circle cx="342" cy="192" r="2.5" fill="#4ec38a"/>
+          <text x="350" y="195" font-family="ui-monospace, monospace" font-size="6.5" fill="#9fb0a7">Liveness 0.94 pass</text>
+          <rect x="332" y="206" width="112" height="20" rx="5" fill="#0b100e" stroke="#232c27"/>
+          <circle cx="342" cy="216" r="2.5" fill="#d99a2b"/>
+          <text x="350" y="219" font-family="ui-monospace, monospace" font-size="6.5" fill="#9fb0a7">Risk tier · review</text>
+          <rect x="332" y="230" width="112" height="20" rx="5" fill="#0b100e" stroke="#232c27"/>
+          <circle cx="342" cy="240" r="2.5" fill="#3d4450"/>
+          <text x="350" y="243" font-family="ui-monospace, monospace" font-size="6.5" fill="#5e6a64">Awaiting signal…</text>
+          <text x="332" y="288" font-family="ui-monospace, monospace" font-size="6.5" fill="#5e6a64">simulated · v2</text>
+        </svg>
+        <img class="cs-shot" src="assets/ai-kyc-onboarding.png" alt="AI-Enhanced KYC Onboarding prototype" loading="lazy" onerror="this.remove()">
       </div>
-    </div>
 
-    <div class="case rv">
-      <div class="case-head"><h3>New societies saw a year of future bills, all marked overdue</h3><span class="tag">Onboarding</span></div>
-      <div class="prob">
-        <dl>
-          <dt>Problem</dt><dd>Bill generation published beyond the current billing period, pushing a year of future bills live — every one stamped with the current month's dates, and therefore immediately overdue.</dd>
-          <dt>Why it mattered</dt><dd>It hit <em>newly onboarded</em> societies specifically. The worst possible first impression: a committee's first look at the product is an inflated outstanding balance nobody can account for.</dd>
-          <dt>What changed</dt><dd class="out">Publish only the current period, correctly dated. Paired with a dry-run-first repair script that re-dated existing bills and returned not-yet-due bills to draft.</dd>
-          <dt>Principle</dt><dd>Anything touching money or historical data runs dry-run first. Non-negotiable.</dd>
-        </dl>
+      <div class="cs-body">
+        <div class="cs-head">
+          <h3>AI-Enhanced KYC Onboarding</h3>
+          <span class="tag">Fintech · KYC</span>
+        </div>
+        <p>A six-step digital onboarding flow for an Indian investing app, built so a first-time investor can fund an account the same day without a human ever touching a clean application. Aadhaar or PAN capture, a live selfie matched against the document, and a risk-tiered decision that either auto-approves or routes to a reviewer — with every automated action written to an audit log the compliance team can read.</p>
+
+        <p class="cs-what">What's in the build</p>
+        <div class="stack">
+          <span class="chip">6-step onboarding</span>
+          <span class="chip">Aadhaar &amp; PAN capture</span>
+          <span class="chip">Document OCR</span>
+          <span class="chip">Live selfie / face liveness</span>
+          <span class="chip">AI decision engine</span>
+          <span class="chip">Live audit log</span>
+          <span class="chip">Risk tiering</span>
+          <span class="chip">Human-in-the-loop review</span>
+          <span class="chip">PMLA consent</span>
+          <span class="chip">RBI data localisation</span>
+        </div>
+
+        <div class="cs-links">
+          <a class="btn primary" href="case_study.html#ai-kyc">Read the case study</a>
+          <a class="btn" href="https://binvestt-kyc.netlify.app" target="_blank" rel="noopener">Prototype ↗</a>
+          <a class="btn" href="https://app.notion.com/p/AI-Enhanced-KYC-Onboarding-3d022e195c728101af6fd405557e9b8c" target="_blank" rel="noopener">Full PRD ↗</a>
+        </div>
       </div>
-    </div>
+    </article>
 
-    <div class="case rv">
-      <div class="case-head"><h3>The gate and the resident couldn't hear each other</h3><span class="tag">0-to-1</span></div>
-      <div class="prob">
-        <dl>
-          <dt>Problem</dt><dd>The Security app had no push capability at all, and the backend never told the gate when a resident approved or rejected a visitor. Guards watched a screen and re-checked manually.</dd>
-          <dt>Why it mattered</dt><dd>The core loop of the whole security product — visitor arrives, resident decides, guard acts — depended on a channel that didn't exist.</dd>
-          <dt>What changed</dt><dd class="out">Built the missing half: device registration, society-scoped fan-out to guards on duty, and decisions that name the flat and the person so a guard can act without opening the app. Notifications are best-effort by design — a delivery failure never blocks the underlying approval.</dd>
-          <dt>Also</dt><dd>Separated two things that were being conflated: a guard filling in a walk-in is a <em>log</em>, while a resident-issued pass carries rules. One-time passes are spent on entry; daily passes reset each calendar day. Conflating them meant a one-time pass could be reused indefinitely.</dd>
-        </dl>
-      </div>
-    </div>
-
-    <div class="case rv">
-      <div class="case-head"><h3>Migrating three live apps from native to Flutter</h3><span class="tag">Platform</span></div>
-      <div class="prob">
-        <dl>
-          <dt>Problem</dt><dd>Three applications built natively in Java and Kotlin, all on one shared backend, all in active use by live societies.</dd>
-          <dt>Why it mattered</dt><dd>Three separate native codebases meant every shared feature was built and fixed three times, and the apps drifted apart in behaviour.</dd>
-          <dt>What changed</dt><dd class="out">Drove the migration to a single Flutter codebase across iOS and Android, coordinating developer, design, and QA workstreams. The constraint that shaped everything: one backend serving all three apps means you cannot cut over independently — migration order, backward compatibility, and app-store review timing all had to line up.</dd>
-          <dt>Outcome</dt><dd>No disruption to live societies during cutover.</dd>
-        </dl>
-      </div>
-    </div>
-
-    <div class="case rv">
-      <div class="case-head"><h3>Trust, safety and privacy</h3><span class="tag grey">Ongoing track</span></div>
-      <p style="color:var(--ink-2); font-size:15.5px; margin:4px 0 16px">A prioritised workstream rather than a single project, covering how the platform verifies who someone is and keeps societies separated from each other.</p>
-      <ul class="clean">
-        <li><b>Identity verification at onboarding</b> — service professionals enrolling in the marketplace pass a face-liveness check, as an anti-fraud gate before they can reach residents.</li>
-        <li><b>Zero-downtime credential migration</b> — moved to hashed credentials using a lazy-upgrade approach: verification accepts both forms and re-hashes on successful login. Nobody is locked out, no coordinated downtime. Slower than a big-bang migration; chosen deliberately for that reason.</li>
-        <li><b>Tenant isolation</b> — every society is a tenant on a shared deployment. Scoping is now enforced on record mutations, not assumed.</li>
-      </ul>
-    </div>
+    <p class="note rv">More case studies land here as they're written up — each one gets a prototype and a full PRD before it goes on this page.</p>
   </div>
 </section>
 
